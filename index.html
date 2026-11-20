@@ -1,0 +1,1324 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Romantic Love Letter For You 💌</title>
+
+    <!-- Meta tags for social previews -->
+    <meta
+      name="description"
+      content="An interactive, deeply romantic personalized love letter with 3D envelope animation, soothing ambient sounds, and floating rose petals."
+    />
+    <meta property="og:title" content="A Romantic Love Letter For You 💌" />
+    <meta
+      property="og:description"
+      content="A timeless, interactive romantic love letter written straight from the heart. Sealed with love."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌹</text></svg>"
+    />
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Cinzel:wght@400;600;700&family=Dancing+Script:wght@500;600;700&family=Montserrat:wght@300;400;500;600&family=Pacifico&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Quicksand:wght@400;500;600;700&family=Sacramento&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Canvas Confetti for celebrations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              romantic: ["Dancing Script", "cursive"],
+              script: ["Sacramento", "cursive"],
+              serif: ["Playfair Display", "serif"],
+              cozy: ["Caveat", "cursive"],
+              body: ["Quicksand", "sans-serif"],
+            },
+            animation: {
+              "float-slow": "float 6s ease-in-out infinite",
+              "float-reverse": "floatRev 7s ease-in-out infinite",
+              "pulse-glow": "pulseGlow 3s ease-in-out infinite",
+              shimmer: "shimmer 2.5s infinite linear",
+              "gentle-wobble": "wobble 2s ease-in-out infinite",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+                "50%": { transform: "translateY(-10px) rotate(1.5deg)" },
+              },
+              floatRev: {
+                "0%, 100%": { transform: "translateY(0px) rotate(0deg)" },
+                "50%": { transform: "translateY(10px) rotate(-1.5deg)" },
+              },
+              pulseGlow: {
+                "0%, 100%": { opacity: "0.7", transform: "scale(1)" },
+                "50%": { opacity: "1", transform: "scale(1.06)" },
+              },
+              wobble: {
+                "0%, 100%": { transform: "scale(1)" },
+                "50%": { transform: "scale(1.03) rotate(-1deg)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* Custom 3D & Paper Styling */
+      .perspective-1000 {
+        perspective: 1000px;
+      }
+
+      .transform-style-3d {
+        transform-style: preserve-3d;
+      }
+
+      .backface-hidden {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+
+      /* Envelope Flap 3D Animation */
+      .envelope-flap {
+        transform-origin: top;
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .envelope-open .envelope-flap {
+        transform: rotateX(180deg);
+      }
+
+      /* Flipping stationary effect */
+      .letter-flip-container {
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .letter-flip-container.is-flipped {
+        transform: rotateY(180deg);
+      }
+
+      /* Paper textures & deckle border aesthetics */
+      .paper-texture {
+        background-color: #fff9f9;
+        background-image:
+          radial-gradient(#fecdd3 0.75px, transparent 0.75px),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.92),
+            rgba(255, 241, 242, 0.98)
+          );
+        background-size:
+          16px 16px,
+          100% 100%;
+        box-shadow:
+          0 25px 50px -12px rgba(136, 19, 55, 0.35),
+          0 0 0 1px rgba(244, 63, 94, 0.15);
+      }
+
+      /* Custom scrollbar for stationery */
+      .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scroll::-webkit-scrollbar-track {
+        background: rgba(244, 63, 94, 0.05);
+        border-radius: 10px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb {
+        background: rgba(225, 29, 72, 0.25);
+        border-radius: 10px;
+      }
+      .custom-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(225, 29, 72, 0.45);
+      }
+
+      /* Wax seal stamp click effect */
+      .wax-seal {
+        box-shadow:
+          0 6px 18px rgba(136, 19, 55, 0.5),
+          inset 0 2px 4px rgba(255, 255, 255, 0.4),
+          inset 0 -3px 5px rgba(0, 0, 0, 0.4);
+        transition:
+          transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+          filter 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .wax-seal:hover {
+        transform: scale(1.1) rotate(4deg);
+        filter: brightness(1.15);
+        box-shadow:
+          0 10px 24px rgba(136, 19, 55, 0.6),
+          inset 0 2px 4px rgba(255, 255, 255, 0.5);
+      }
+      .wax-seal:active {
+        transform: scale(0.94);
+      }
+
+      /* Postmark stamp */
+      .postmark {
+        display: inline-block;
+        border: 2px solid rgba(190, 18, 60, 0.45);
+        border-radius: 50%;
+        width: 58px;
+        height: 58px;
+        transform: rotate(-12deg);
+      }
+
+      /* Ambient audio pulse indicator */
+      @keyframes soundWave {
+        0%,
+        100% {
+          height: 4px;
+        }
+        50% {
+          height: 16px;
+        }
+      }
+      .sound-bar {
+        animation: soundWave 1.2s ease-in-out infinite;
+      }
+      .sound-bar:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .sound-bar:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .sound-bar:nth-child(4) {
+        animation-delay: 0.1s;
+      }
+
+      @media print {
+        body {
+          background: white !important;
+          color: black !important;
+        }
+        #bgCanvas,
+        header,
+        nav,
+        footer,
+        #envelopeStage,
+        #customizeDrawer,
+        #shareModal,
+        .no-print {
+          display: none !important;
+        }
+        #letterStage {
+          display: block !important;
+          opacity: 1 !important;
+          max-width: 100% !important;
+          box-shadow: none !important;
+        }
+        .paper-texture {
+          box-shadow: none !important;
+          border: 1px solid #ccc !important;
+        }
+      }
+    </style>
+  </head>
+  <body
+    class="h-full w-full overflow-x-hidden font-body bg-gradient-to-br from-[#1a0309] via-[#350813] to-[#540d1f] text-slate-800 select-none"
+  >
+    <!-- Floating Rose Petals & Sparkles Background Canvas -->
+    <canvas
+      id="bgCanvas"
+      class="fixed inset-0 pointer-events-none z-0 w-full h-full"
+    ></canvas>
+
+    <!-- UI Overlay Wrapper -->
+    <div
+      class="relative z-10 flex flex-col min-h-screen w-full justify-between items-center px-3 sm:px-6 py-4 sm:py-6"
+    >
+      <!-- Top Header & Actions Bar -->
+      <header
+        class="w-full max-w-4xl flex flex-wrap justify-between items-center gap-3 bg-white/10 backdrop-blur-md p-3 sm:p-4 rounded-3xl border border-rose-300/20 shadow-xl text-white"
+      >
+        <div class="flex items-center gap-3">
+          <div
+            id="moodIconBadge"
+            class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center bg-rose-500/20 border border-rose-300/30 shadow-inner text-xl text-rose-400 transition-transform duration-500 hover:rotate-12"
+          >
+            <i class="fa-solid fa-heart animate-pulse"></i>
+          </div>
+          <div>
+            <h1
+              class="font-bold text-base sm:text-lg leading-tight tracking-wide drop-shadow"
+              id="appTitle"
+            >
+              A few things worth saying
+            </h1>
+            <p class="text-xs text-rose-200/80" id="appSub">
+              Some feelings deserve a little space, and a few words
+            </p>
+          </div>
+        </div>
+
+        <!-- Top Controls -->
+        <div class="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+          <!-- Sound & Music Toggle -->
+          <button
+            id="audioToggleBtn"
+            title="Toggle Romantic Ambience"
+            class="px-3.5 py-2 rounded-full bg-white/15 hover:bg-white/25 border border-white/25 flex items-center gap-2 transition-all shadow-sm group"
+          >
+            <span id="soundWaveIcon" class="flex items-end gap-0.5 h-4">
+              <span class="w-0.5 bg-rose-300 rounded-full sound-bar"></span>
+              <span class="w-0.5 bg-rose-300 rounded-full sound-bar"></span>
+              <span class="w-0.5 bg-rose-300 rounded-full sound-bar"></span>
+              <span class="w-0.5 bg-rose-300 rounded-full sound-bar"></span>
+            </span>
+            <span
+              id="soundBtnText"
+              class="text-xs font-semibold hidden md:inline"
+              >Ambience</span
+            >
+          </button>
+
+          <!-- Virtual Hug Heart Burst Button -->
+          <button
+            id="hugBtn"
+            title="Send a burst of floating hearts"
+            class="px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-bold rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-md hover:shadow-rose-500/50 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+          >
+            <i class="fa-solid fa-heart animate-bounce text-pink-200"></i>
+            <span>Get Hug</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Subtle Romantic Ribbon -->
+      <div class="my-2.5 text-center">
+        <span
+          class="text-[11px] sm:text-xs tracking-widest uppercase font-serif text-rose-200/75 border-b border-rose-400/20 pb-1"
+        >
+          ✦ Sealed With Infinite Tenderness & Eternal Love ✦
+        </span>
+      </div>
+
+      <!-- Main Interactive Area: Envelope & Letter Container -->
+      <main
+        class="w-full max-w-3xl flex-1 flex flex-col items-center justify-center relative py-2 sm:py-4"
+      >
+        <!-- Sealed Envelope Stage (Shown when closed) -->
+        <div
+          id="envelopeStage"
+          class="w-full max-w-md aspect-[1.52/1] relative cursor-pointer group perspective-1000 transition-all duration-500 my-auto animate-float-slow"
+        >
+          <!-- Envelope Body -->
+          <div
+            id="envelopeBox"
+            class="w-full h-full rounded-2xl relative shadow-2xl transition-all duration-700 transform-style-3d bg-rose-100 border-2 border-rose-200 flex flex-col items-center justify-center overflow-hidden"
+          >
+            <!-- Envelope Subtle Texture Pattern -->
+            <div
+              class="absolute inset-0 opacity-15 bg-[radial-gradient(#881337_1px,transparent_1px)] [background-size:12px_12px] pointer-events-none"
+            ></div>
+
+            <!-- Envelope Pocket Triangles (Back side fold aesthetics) -->
+            <div
+              class="absolute bottom-0 left-0 right-0 h-1/2 bg-rose-200/70 [clip-path:polygon(0_100%,50%_20%,100%_100%)] border-t border-white/40"
+            ></div>
+            <div
+              class="absolute inset-y-0 left-0 w-1/2 bg-rose-200/50 [clip-path:polygon(0_0,80%_50%,0_100%)]"
+            ></div>
+            <div
+              class="absolute inset-y-0 right-0 w-1/2 bg-rose-200/50 [clip-path:polygon(100%_0,20%_50%,100%_100%)]"
+            ></div>
+
+            <!-- Postmark Stamp Details -->
+            <div
+              class="absolute top-4 right-5 opacity-40 select-none pointer-events-none postmark flex flex-col items-center justify-center text-[8px] font-mono text-rose-950 font-bold uppercase tracking-widest"
+            >
+              <span>AIR MAIL</span>
+              <span id="envelopeStampDate">ROMANCE</span>
+              <span>SPECIAL</span>
+            </div>
+
+            <!-- Top Opening Flap -->
+            <div
+              id="envelopeFlap"
+              class="envelope-flap absolute top-0 left-0 right-0 h-1/2 bg-rose-200 rounded-t-2xl origin-top z-20 shadow-md [clip-path:polygon(0_0,100%_0,50%_100%)] flex items-start justify-center pt-2"
+            ></div>
+
+            <!-- Wax Seal (Click to Open) -->
+            <div
+              id="waxSealBtn"
+              class="wax-seal z-30 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gradient-to-br from-rose-700 via-rose-800 to-red-950 flex items-center justify-center text-rose-100 border-2 border-rose-300/40 cursor-pointer group-hover:scale-110 transition-all"
+            >
+              <div
+                class="w-12 h-12 sm:w-14 sm:h-14 rounded-full border border-dashed border-rose-300/60 flex items-center justify-center text-xl sm:text-2xl font-bold shadow-inner"
+              >
+                <i id="waxSealIcon" class="fa-solid fa-heart text-rose-200"></i>
+              </div>
+            </div>
+
+            <!-- Envelope Address Text -->
+            <div class="z-10 text-center mt-16 sm:mt-20 px-4">
+              <p
+                class="font-serif italic text-rose-950/70 text-xs sm:text-sm tracking-widest uppercase"
+              >
+                To Someone Truly Special
+              </p>
+              <h2
+                id="envelopeRecipientLabel"
+                class="font-bold text-rose-950 text-2xl sm:text-3xl mt-1 tracking-wide font-romantic drop-shadow-sm"
+              >
+                My Soulmate
+              </h2>
+              <div class="flex items-center justify-center gap-1.5 mt-3">
+                <span
+                  class="w-2 h-2 rounded-full bg-rose-600 animate-ping"
+                ></span>
+                <p class="text-xs text-rose-900/80 font-medium">
+                  Click Wax Seal to Break Open
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opened Stationery Love Letter (Shown when unsealed) -->
+        <div
+          id="letterStage"
+          class="w-full max-w-xl hidden opacity-0 transition-all duration-700 my-auto perspective-1000"
+        >
+          <!-- Flippable Card Container -->
+          <div
+            id="letterFlipCard"
+            class="letter-flip-container transform-style-3d relative w-full"
+          >
+            <!-- ================= Front Side of Stationery ================= -->
+            <div
+              class="paper-texture rounded-3xl p-6 sm:p-10 text-slate-800 shadow-2xl border border-rose-200/80 relative min-h-[520px] flex flex-col justify-between backface-hidden"
+            >
+              <!-- Vintage Decorative Stamp & Action Bar -->
+              <div
+                class="flex items-center justify-between border-b border-rose-900/15 pb-4 mb-3"
+              >
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block animate-pulse"
+                  ></span>
+                  <span
+                    class="text-xs font-bold uppercase tracking-widest text-rose-900/80"
+                    id="currentMoodBadgeText"
+                    >Deeply Romantic</span
+                  >
+                  <span class="text-xs text-rose-900/40">•</span>
+                  <span
+                    class="text-xs font-mono text-rose-900/60"
+                    id="letterDate"
+                    >Today</span
+                  >
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <!-- Read Back Button -->
+                  <button
+                    id="flipToBackBtn"
+                    title="Flip letter to read secret P.S."
+                    class="text-xs px-3 py-1.5 rounded-full bg-rose-900/10 hover:bg-rose-900/20 text-rose-950 font-semibold transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+                  >
+                    <i class="fa-solid fa-arrow-rotate-right text-rose-700"></i>
+                    <span>Read P.S.</span>
+                  </button>
+
+                  <!-- Decorative Postage Stamp -->
+                  <div
+                    class="w-10 h-12 border border-dashed border-rose-900/40 rounded p-1 bg-rose-100/70 flex flex-col items-center justify-center text-[8px] text-rose-950/80 font-mono shadow-sm"
+                  >
+                    <i
+                      class="fa-solid fa-heart text-xs text-rose-600 mb-0.5 animate-pulse"
+                    ></i>
+                    <span>LOVE</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Top Letter Header -->
+              <div class="mb-3">
+                <h2
+                  id="letterHeading"
+                  class="text-3xl sm:text-4xl font-bold font-romantic text-rose-950 tracking-wide"
+                >
+                  My Dearest Beloved,
+                </h2>
+              </div>
+
+              <!-- Letter Body Paragraphs -->
+              <div
+                id="letterBody"
+                class="letter-body-text flex-1 text-lg sm:text-xl leading-relaxed font-romantic font-semibold text-rose-950/90 space-y-4 my-3"
+              >
+                <p class="leading-relaxed">
+                  Some things are too meaningful to be reduced to a moment, a
+                  misunderstanding, or a difficult day. What we share has always
+                  meant something special to me, and that hasn't changed just
+                  because things feel a little different right now.
+                </p>
+
+                <p class="leading-relaxed">
+                  You are someone I hold close to my heart, not because
+                  everything has always been perfect, but because there is
+                  something about you, about us, that I have always genuinely
+                  cherished. Some feelings don't need constant words to remain
+                  real.
+                </p>
+
+                <p class="leading-relaxed">
+                  I won't try to force a moment, an answer, or a feeling. I just
+                  wanted you to know that what you mean to me is real, and some
+                  things are still worth looking at with a little calm, a little
+                  understanding, and an open heart.
+                </p>
+              </div>
+
+              <!-- Signature & Actions Bottom Bar -->
+              <div
+                class="mt-4 pt-4 border-t border-rose-900/15 flex flex-wrap items-end justify-between gap-3"
+              >
+                <div>
+                  <p
+                    class="text-xs text-slate-500 font-sans tracking-wide uppercase"
+                  >
+                    Forever & Always,
+                  </p>
+                  <p
+                    id="letterSender"
+                    class="text-2xl sm:text-3xl font-bold font-romantic text-rose-950 mt-0.5"
+                  >
+                    Forever Yours
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <!-- Copy Text -->
+                  <button
+                    id="copyLetterBtn"
+                    title="Copy letter text to clipboard"
+                    class="w-9 h-9 rounded-full bg-rose-900/10 hover:bg-rose-900/20 text-rose-950 flex items-center justify-center transition-all active:scale-90"
+                    aria-label="Copy letter text"
+                  >
+                    <i class="fa-solid fa-copy text-sm"></i>
+                  </button>
+                  <!-- Print letter -->
+                  <button
+                    id="printLetterBtn"
+                    title="Print or save as PDF"
+                    class="w-9 h-9 rounded-full bg-rose-900/10 hover:bg-rose-900/20 text-rose-950 flex items-center justify-center transition-all active:scale-90"
+                    aria-label="Print letter"
+                  >
+                    <i class="fa-solid fa-print text-sm"></i>
+                  </button>
+                  <!-- Return to Envelope -->
+                  <button
+                    id="closeLetterBtn"
+                    title="Fold and put back into envelope"
+                    class="w-9 h-9 rounded-full bg-rose-900/10 hover:bg-rose-900/20 text-rose-950 flex items-center justify-center transition-all active:scale-90"
+                    aria-label="Put back in envelope"
+                  >
+                    <i class="fa-solid fa-envelope text-sm"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= Back Side of Stationery (Secret Notes & P.S.) ================= -->
+            <div
+              class="paper-texture rounded-3xl p-6 sm:p-10 text-slate-800 shadow-2xl border border-rose-200/80 absolute inset-0 [transform:rotateY(180deg)] backface-hidden flex flex-col justify-between"
+            >
+              <div
+                class="flex justify-between items-center border-b border-rose-900/15 pb-4 mb-4"
+              >
+                <div class="flex items-center gap-2">
+                  <i class="fa-solid fa-feather text-rose-600"></i>
+                  <h3
+                    class="font-bold text-xl sm:text-2xl font-romantic text-rose-950"
+                  >
+                    A Secret Handwritten Note...
+                  </h3>
+                </div>
+                <button
+                  id="flipToFrontBtn"
+                  class="text-xs px-3.5 py-1.5 rounded-full bg-rose-900/10 hover:bg-rose-900/20 text-rose-950 font-semibold transition-all flex items-center gap-1.5 active:scale-95 shadow-sm"
+                >
+                  <i class="fa-solid fa-arrow-rotate-left text-rose-700"></i>
+                  <span>Front Page</span>
+                </button>
+              </div>
+
+              <!-- Handwritten quote container -->
+              <div
+                class="flex-1 flex flex-col justify-center items-center text-center p-6 bg-white/70 rounded-2xl border border-rose-900/10 my-auto shadow-inner relative overflow-hidden"
+              >
+                <i
+                  class="fa-solid fa-quote-left text-3xl text-rose-300/80 mb-2"
+                ></i>
+                <p
+                  id="secretNoteDisplay"
+                  class="font-romantic text-2xl sm:text-3xl text-rose-950 leading-relaxed font-semibold"
+                >
+                  "P.S. Meeting you was fate; loving you is my greatest
+                  blessing."
+                </p>
+                <i
+                  class="fa-solid fa-quote-right text-3xl text-rose-300/80 mt-2"
+                ></i>
+
+                <div
+                  class="mt-4 flex items-center gap-2 text-xs font-serif text-rose-900/70 uppercase tracking-widest"
+                >
+                  <span>✦ Sealed with infinite tenderness ✦</span>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-between pt-4 border-t border-rose-900/15 text-xs text-rose-950/70"
+              >
+                <span class="font-mono">P.S. Confidential</span>
+                <span class="font-romantic text-xl text-rose-900 font-bold"
+                  >Always in my heart</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- Footer Caption -->
+      <footer
+        class="w-full max-w-lg text-center py-2 flex flex-col items-center gap-1"
+      >
+        <p
+          class="text-xs text-rose-200/90 font-medium drop-shadow-sm flex items-center justify-center gap-1.5"
+        >
+          <span>Crafted with love & romance</span>
+          <span>•</span>
+          <span>Sealed with a kiss</span>
+        </p>
+        <div class="flex items-center gap-3 text-[11px] text-rose-300/60">
+          <button
+            id="resetDefaultsBtn"
+            class="hover:text-pink-300 underline underline-offset-2 transition-colors"
+          >
+            Reset Letter to Default
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Toast Notification -->
+    <div
+      id="toast"
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2.5 rounded-full bg-slate-900/95 text-white text-xs sm:text-sm font-medium shadow-2xl flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300 border border-white/15"
+    >
+      <i id="toastIcon" class="fa-solid fa-circle-check text-rose-400"></i>
+      <span id="toastMsg">Letter copied to clipboard!</span>
+    </div>
+
+    <!-- ==========================================================================
+         JAVASCRIPT APPLICATION LOGIC
+         ========================================================================== -->
+    <script>
+      /* ==========================================================================
+           1. DEFAULT ROMANTIC LETTER CONFIGURATION & STATE
+           ========================================================================== */
+      const DEFAULT_ROMANTIC_BODY = `Some things are too meaningful to be reduced to a moment, a misunderstanding, or a difficult day. What we share has always meant something special to me, and that hasn't changed just because things feel a little different right now.
+
+You are someone I hold close to my heart, not because everything has always been perfect, but because there is something about you, about us, that I have always genuinely cherished. Some feelings don't need constant words to remain real.
+
+I won't try to force a moment, an answer, or a feeling. I just wanted you to know that what you mean to me is real, and some things are still worth looking at with a little calm, a little understanding, and an open heart ❤️🫶🏻.`;
+
+      let state = {
+        isOpen: false,
+        isFlipped: false,
+        recipient: "My Dearest Beloved",
+        sender: "Forever Yours",
+        nickname: "My Everything",
+        letterBody: DEFAULT_ROMANTIC_BODY,
+        secretNote:
+          "P.S. Meeting you was fate; loving you is my greatest blessing.",
+        ambientActive: false,
+      };
+
+      /* Load state from URL parameters or localStorage */
+      function loadSavedState() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const hashParams = new URLSearchParams(
+            window.location.hash.replace("#", ""),
+          );
+
+          const to = params.get("to") || hashParams.get("to");
+          const from = params.get("from") || hashParams.get("from");
+          const nick = params.get("nick") || hashParams.get("nick");
+          const ps = params.get("ps") || hashParams.get("ps");
+          const body = params.get("body") || hashParams.get("body");
+
+          if (to) state.recipient = decodeURIComponent(to);
+          if (from) state.sender = decodeURIComponent(from);
+          if (nick) state.nickname = decodeURIComponent(nick);
+          if (ps) state.secretNote = decodeURIComponent(ps);
+          if (body) state.letterBody = decodeURIComponent(body);
+
+          // If not in URL, check localStorage
+          if (!to && localStorage.getItem("love_letter_recipient")) {
+            state.recipient =
+              localStorage.getItem("love_letter_recipient") || state.recipient;
+            state.sender =
+              localStorage.getItem("love_letter_sender") || state.sender;
+            state.nickname =
+              localStorage.getItem("love_letter_nickname") || state.nickname;
+            state.secretNote =
+              localStorage.getItem("love_letter_ps") || state.secretNote;
+            state.letterBody =
+              localStorage.getItem("love_letter_body") || state.letterBody;
+          }
+        } catch (e) {
+          console.warn("Could not parse saved state:", e);
+        }
+      }
+
+      function saveStateToStorage() {
+        // No-op: personalization UI removed
+      }
+
+      /* ==========================================================================
+           2. WEB AUDIO API SYNTHESIZER & ROMANTIC AMBIENCE
+           ========================================================================== */
+      class AudioSynth {
+        constructor() {
+          this.ctx = null;
+          this.ambientInterval = null;
+          this.ambientGain = null;
+        }
+
+        init() {
+          if (!this.ctx) {
+            const AudioContext =
+              window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) {
+              this.ctx = new AudioContext();
+              this.ambientGain = this.ctx.createGain();
+              this.ambientGain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+              this.ambientGain.connect(this.ctx.destination);
+            }
+          }
+          if (this.ctx && this.ctx.state === "suspended") {
+            this.ctx.resume();
+          }
+        }
+
+        playTone(freq, type = "sine", duration = 0.3, gainVal = 0.15) {
+          try {
+            this.init();
+            if (!this.ctx) return;
+
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+
+            gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(
+              0.0001,
+              this.ctx.currentTime + duration,
+            );
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+          } catch (e) {}
+        }
+
+        playEnvelopeOpen() {
+          this.init();
+          // Romantic harp chord cascade (Eb major 9)
+          const chord = [311.13, 392.0, 466.16, 587.33, 622.25];
+          chord.forEach((freq, i) => {
+            setTimeout(() => this.playTone(freq, "sine", 0.65, 0.12), i * 70);
+          });
+        }
+
+        playHugBurst() {
+          this.init();
+          const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+          notes.forEach((freq, i) => {
+            setTimeout(() => this.playTone(freq, "sine", 0.65, 0.12), i * 50);
+          });
+        }
+
+        playFlip() {
+          this.init();
+          this.playTone(293.66, "sine", 0.18, 0.07);
+        }
+
+        toggleAmbience() {
+          this.init();
+          state.ambientActive = !state.ambientActive;
+          const waveBars = document.querySelectorAll(".sound-bar");
+          const btnText = document.getElementById("soundBtnText");
+
+          if (state.ambientActive) {
+            waveBars.forEach((b) => (b.style.animationPlayState = "running"));
+            btnText.textContent = "Ambience On";
+            this.startAmbientLoop();
+            showToast("🎶 Soft romantic ambience playing");
+          } else {
+            waveBars.forEach((b) => (b.style.animationPlayState = "paused"));
+            btnText.textContent = "Ambience Off";
+            this.stopAmbientLoop();
+            showToast("🔇 Ambience turned off");
+          }
+        }
+
+        startAmbientLoop() {
+          this.stopAmbientLoop();
+          if (!state.ambientActive) return;
+
+          // Lush romantic atmospheric chord progression
+          const playChord = () => {
+            if (!state.ambientActive) return;
+            const chordBank = [
+              [261.63, 329.63, 392.0, 493.88], // Cmaj7
+              [220.0, 261.63, 329.63, 392.0], // Am7
+              [174.61, 220.0, 261.63, 329.63], // Fmaj7
+              [196.0, 246.94, 293.66, 392.0], // G7
+            ];
+            const chosen =
+              chordBank[Math.floor(Math.random() * chordBank.length)];
+            chosen.forEach((freq, idx) => {
+              setTimeout(() => {
+                this.playTone(freq, "sine", 3.0, 0.04);
+              }, idx * 130);
+            });
+          };
+
+          playChord();
+          this.ambientInterval = setInterval(playChord, 5200);
+        }
+
+        stopAmbientLoop() {
+          if (this.ambientInterval) {
+            clearInterval(this.ambientInterval);
+            this.ambientInterval = null;
+          }
+        }
+      }
+
+      const synth = new AudioSynth();
+
+      /* ==========================================================================
+           3. CANVAS PARTICLES ENGINE: FLOATING ROSE PETALS & SPARKLES
+           ========================================================================== */
+      const canvas = document.getElementById("bgCanvas");
+      const ctx = canvas.getContext("2d");
+      let particles = [];
+      let burstParticles = [];
+
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+
+      class RosePetal {
+        constructor() {
+          this.reset();
+        }
+
+        reset() {
+          this.x = Math.random() * (canvas.width + 100) - 50;
+          this.y = Math.random() * -canvas.height;
+          this.size = Math.random() * 9 + 6;
+          this.speedY = Math.random() * 1.2 + 0.6;
+          this.speedX = Math.random() * 0.8 - 0.4;
+          this.angle = Math.random() * Math.PI * 2;
+          this.angularVelocity = (Math.random() - 0.5) * 0.02;
+          this.flip = Math.random() * Math.PI;
+          this.flipSpeed = Math.random() * 0.03 + 0.01;
+          this.opacity = Math.random() * 0.55 + 0.35;
+
+          // Rich romantic rose shades
+          const colors = [
+            "#e11d48",
+            "#be123c",
+            "#f43f5e",
+            "#fb7185",
+            "#9f1239",
+          ];
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        update() {
+          this.y += this.speedY;
+          this.x += Math.sin(this.angle) * 0.8 + this.speedX;
+          this.angle += this.angularVelocity;
+          this.flip += this.flipSpeed;
+
+          if (this.y > canvas.height + 30) {
+            this.y = -30;
+            this.x = Math.random() * canvas.width;
+          }
+        }
+
+        draw() {
+          ctx.save();
+          ctx.globalAlpha = this.opacity;
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+          ctx.scale(Math.cos(this.flip), 1);
+
+          ctx.fillStyle = this.color;
+          ctx.shadowBlur = 4;
+          ctx.shadowColor = "rgba(136, 19, 55, 0.3)";
+
+          ctx.beginPath();
+          ctx.ellipse(
+            0,
+            0,
+            this.size,
+            this.size / 1.8,
+            Math.PI / 4,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+
+          ctx.restore();
+        }
+      }
+
+      class SparkleParticle {
+        constructor() {
+          this.reset();
+        }
+
+        reset() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2 + 1;
+          this.alpha = Math.random() * 0.6 + 0.2;
+          this.rate = Math.random() * 0.02 + 0.01;
+          this.increasing = Math.random() > 0.5;
+        }
+
+        update() {
+          if (this.increasing) {
+            this.alpha += this.rate;
+            if (this.alpha >= 0.8) this.increasing = false;
+          } else {
+            this.alpha -= this.rate;
+            if (this.alpha <= 0.15) this.increasing = true;
+          }
+        }
+
+        draw() {
+          ctx.save();
+          ctx.globalAlpha = this.alpha;
+          ctx.fillStyle = "#fecdd3";
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = "#f43f5e";
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      class HugBurstParticle {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+          const angle = Math.random() * Math.PI * 2;
+          const speed = Math.random() * 9 + 3;
+          this.vx = Math.cos(angle) * speed;
+          this.vy = Math.sin(angle) * speed - 2.5;
+          this.size = Math.random() * 18 + 8;
+          this.life = 1;
+          this.decay = Math.random() * 0.018 + 0.012;
+          this.color = [
+            "#f43f5e",
+            "#ec4899",
+            "#fb7185",
+            "#fda4af",
+            "#f472b6",
+            "#e11d48",
+          ][Math.floor(Math.random() * 6)];
+          this.rotation = Math.random() * Math.PI;
+        }
+
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.vy += 0.16;
+          this.life -= this.decay;
+          this.rotation += 0.05;
+        }
+
+        draw() {
+          if (this.life <= 0) return;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, this.life);
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.rotation);
+          ctx.fillStyle = this.color;
+          drawHeart(ctx, 0, 0, this.size);
+          ctx.restore();
+        }
+      }
+
+      function drawHeart(c, x, y, size) {
+        c.beginPath();
+        const topCurveHeight = size * 0.3;
+        c.moveTo(x, y + topCurveHeight);
+        c.bezierCurveTo(
+          x,
+          y,
+          x - size / 2,
+          y,
+          x - size / 2,
+          y + topCurveHeight,
+        );
+        c.bezierCurveTo(
+          x - size / 2,
+          y + (size + topCurveHeight) / 2,
+          x,
+          y + size,
+          x,
+          y + size,
+        );
+        c.bezierCurveTo(
+          x,
+          y + (size + topCurveHeight) / 2,
+          x + size / 2,
+          y + topCurveHeight,
+          x + size / 2,
+          y + topCurveHeight,
+        );
+        c.bezierCurveTo(x + size / 2, y, x, y, x, y + topCurveHeight);
+        c.closePath();
+        c.fill();
+      }
+
+      function initBackgroundParticles() {
+        particles = [];
+        const petalCount = window.innerWidth < 640 ? 25 : 45;
+        for (let i = 0; i < petalCount; i++) {
+          particles.push(new RosePetal());
+        }
+        const sparkleCount = window.innerWidth < 640 ? 20 : 35;
+        for (let i = 0; i < sparkleCount; i++) {
+          particles.push(new SparkleParticle());
+        }
+      }
+
+      function triggerHugExplosion() {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        for (let i = 0; i < 50; i++) {
+          burstParticles.push(new HugBurstParticle(centerX, centerY));
+        }
+        synth.playHugBurst();
+
+        // Celebratory confetti
+        if (typeof confetti === "function") {
+          confetti({
+            particleCount: 45,
+            spread: 85,
+            origin: { y: 0.6 },
+            colors: ["#f43f5e", "#ec4899", "#fbcfe8", "#fda4af"],
+          });
+        }
+
+        showToast("💖 Virtual Hug Sent with infinite warmth!");
+      }
+
+      function renderLoop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Render background floating particles
+        particles.forEach((p) => {
+          p.update();
+          p.draw();
+        });
+
+        // Render hug burst particles
+        for (let i = burstParticles.length - 1; i >= 0; i--) {
+          const bp = burstParticles[i];
+          bp.update();
+          bp.draw();
+          if (bp.life <= 0) burstParticles.splice(i, 1);
+        }
+
+        requestAnimationFrame(renderLoop);
+      }
+
+      /* ==========================================================================
+           4. UI LOGIC & LETTER DISPLAY
+           ========================================================================== */
+      const envelopeStage = document.getElementById("envelopeStage");
+      const envelopeBox = document.getElementById("envelopeBox");
+      const envelopeFlap = document.getElementById("envelopeFlap");
+      const waxSealBtn = document.getElementById("waxSealBtn");
+      const letterStage = document.getElementById("letterStage");
+      const letterFlipCard = document.getElementById("letterFlipCard");
+      const envelopeRecipientLabel = document.getElementById(
+        "envelopeRecipientLabel",
+      );
+      const envelopeStampDate = document.getElementById("envelopeStampDate");
+
+      const letterHeading = document.getElementById("letterHeading");
+      const letterBody = document.getElementById("letterBody");
+      const letterSender = document.getElementById("letterSender");
+      const letterDate = document.getElementById("letterDate");
+      const secretNoteDisplay = document.getElementById("secretNoteDisplay");
+
+      function updateLetterText() {
+        // Update envelope address
+        envelopeRecipientLabel.textContent = state.recipient;
+
+        // Letter heading
+        letterHeading.textContent = `${state.recipient},`;
+
+        // Letter signature
+        letterSender.textContent = state.sender;
+
+        // Secret note
+        secretNoteDisplay.textContent = `"${state.secretNote}"`;
+
+        // Process paragraphs (substitute {nick})
+        const rawBody = state.letterBody || DEFAULT_ROMANTIC_BODY;
+        const parsedBody = rawBody.replace(/\{nick\}/g, state.nickname);
+        const paragraphs = parsedBody
+          .split(/\n\s*\n/)
+          .filter((p) => p.trim().length > 0);
+
+        letterBody.innerHTML = paragraphs
+          .map((p) => {
+            const cleanP = p.replace(/\n/g, "<br>");
+            return `<p class="leading-relaxed">${cleanP}</p>`;
+          })
+          .join("");
+
+        // Format current date
+        const now = new Date();
+        const options = { month: "short", day: "numeric", year: "numeric" };
+        const formattedDate = now.toLocaleDateString("en-US", options);
+        letterDate.textContent = formattedDate;
+        envelopeStampDate.textContent = now
+          .toLocaleDateString("en-US", { month: "short", year: "2-digit" })
+          .toUpperCase();
+      }
+
+      function openEnvelope() {
+        if (state.isOpen) return;
+        state.isOpen = true;
+        synth.playEnvelopeOpen();
+
+        envelopeStage.classList.add("envelope-open");
+
+        // Burst confetti when opening
+        if (typeof confetti === "function") {
+          confetti({
+            particleCount: 55,
+            spread: 75,
+            origin: { y: 0.5 },
+            colors: ["#fda4af", "#f43f5e", "#fef08a", "#e11d48"],
+          });
+        }
+
+        setTimeout(() => {
+          envelopeStage.classList.add("hidden");
+          letterStage.classList.remove("hidden");
+          setTimeout(() => {
+            letterStage.classList.remove("opacity-0");
+          }, 50);
+        }, 650);
+      }
+
+      function closeEnvelope() {
+        if (!state.isOpen) return;
+        state.isOpen = false;
+        state.isFlipped = false;
+        letterFlipCard.classList.remove("is-flipped");
+
+        letterStage.classList.add("opacity-0");
+        setTimeout(() => {
+          letterStage.classList.add("hidden");
+          envelopeStage.classList.remove("hidden");
+          setTimeout(() => {
+            envelopeStage.classList.remove("envelope-open");
+          }, 50);
+        }, 500);
+      }
+
+      function toggleFlipLetter() {
+        state.isFlipped = !state.isFlipped;
+        synth.playFlip();
+        if (state.isFlipped) {
+          letterFlipCard.classList.add("is-flipped");
+        } else {
+          letterFlipCard.classList.remove("is-flipped");
+        }
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toastMsg");
+        toastMsg.textContent = msg;
+
+        toast.classList.remove("opacity-0", "pointer-events-none");
+        toast.classList.add("opacity-100");
+
+        setTimeout(() => {
+          toast.classList.remove("opacity-100");
+          toast.classList.add("opacity-0", "pointer-events-none");
+        }, 3200);
+      }
+
+      /* ==========================================================================
+           5. EVENT LISTENERS & INITIALIZATION
+           ========================================================================== */
+      // Wax Seal & Envelope Click
+      waxSealBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openEnvelope();
+      });
+      envelopeStage.addEventListener("click", () => {
+        openEnvelope();
+      });
+
+      // Close Letter (Put back in envelope)
+      document
+        .getElementById("closeLetterBtn")
+        .addEventListener("click", closeEnvelope);
+
+      // Flip Letter Buttons
+      document
+        .getElementById("flipToBackBtn")
+        .addEventListener("click", toggleFlipLetter);
+      document
+        .getElementById("flipToFrontBtn")
+        .addEventListener("click", toggleFlipLetter);
+
+      // Virtual Hug Button
+      document
+        .getElementById("hugBtn")
+        .addEventListener("click", triggerHugExplosion);
+
+      // Audio Ambience Toggle
+      const audioToggleBtn = document.getElementById("audioToggleBtn");
+      if (audioToggleBtn) {
+        audioToggleBtn.addEventListener("click", () => {
+          synth.toggleAmbience();
+        });
+      }
+
+      // Print letter
+      const printLetterBtn = document.getElementById("printLetterBtn");
+      if (printLetterBtn) {
+        printLetterBtn.addEventListener("click", () => {
+          window.print();
+        });
+      }
+
+      // Reset to default
+      const resetDefaultsBtn = document.getElementById("resetDefaultsBtn");
+      if (resetDefaultsBtn) {
+        resetDefaultsBtn.addEventListener("click", () => {
+          if (confirm("Reset letter to the romantic default?")) {
+            localStorage.clear();
+            state.recipient = "My Dearest Beloved";
+            state.sender = "Forever Yours";
+            state.nickname = "My Everything";
+            state.letterBody = DEFAULT_ROMANTIC_BODY;
+            state.secretNote =
+              "P.S. Meeting you was fate; loving you is my greatest blessing.";
+
+            updateLetterText();
+            showToast("Letter reset to romantic defaults!");
+          }
+        });
+      }
+
+      // Copy Letter Text
+      const copyLetterBtn = document.getElementById("copyLetterBtn");
+      if (copyLetterBtn) {
+        copyLetterBtn.addEventListener("click", () => {
+          const parsedBody = state.letterBody.replace(
+            /\{nick\}/g,
+            state.nickname,
+          );
+          const fullText = `${state.recipient},\n\n${parsedBody}\n\nForever & Always,\n${state.sender}\n\n${state.secretNote}`;
+
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard
+              .writeText(fullText)
+              .then(() => {
+                showToast("💌 Romantic letter copied to clipboard!");
+              })
+              .catch(() => fallbackCopy(fullText));
+          } else {
+            fallbackCopy(fullText);
+          }
+        });
+      }
+
+      function fallbackCopy(text) {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+        showToast("💌 Romantic letter copied to clipboard!");
+      }
+
+      // Window & DOM load initialization
+      let appInitialized = false;
+      function initApp() {
+        if (appInitialized) return;
+        appInitialized = true;
+        loadSavedState();
+        updateLetterText();
+        initBackgroundParticles();
+        renderLoop();
+      }
+
+      if (
+        document.readyState === "complete" ||
+        document.readyState === "interactive"
+      ) {
+        initApp();
+      } else {
+        document.addEventListener("DOMContentLoaded", initApp);
+        window.addEventListener("load", initApp);
+      }
+    </script>
+  </body>
+</html>
